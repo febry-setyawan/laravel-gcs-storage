@@ -1,0 +1,6 @@
+# Ignore generated content and dependencies
+*
+# Allow specific files and directories
+!.gitignore
+!public/
+!public/index.php
