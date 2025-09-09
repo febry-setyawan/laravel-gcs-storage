@@ -36,6 +36,56 @@ A Laravel application that encapsulates Google Cloud Storage bucket access with 
 
 ## Installation
 
+### Docker Setup (Recommended)
+
+For local development, we recommend using Docker for easy setup:
+
+1. **Prerequisites**:
+   - [Docker](https://docs.docker.com/get-docker/) (version 20.10+)
+   - [Docker Compose](https://docs.docker.com/compose/install/) (version 2.0+)
+
+2. **Quick Setup**:
+   ```bash
+   git clone https://github.com/febry-setyawan/laravel-gcs-storage.git
+   cd laravel-gcs-storage
+   ./docker-setup.sh
+   ```
+
+3. **Configure Google Cloud Storage**:
+   - Place your GCS service account JSON file in `storage/app/gcs-service-account.json`
+   - Update `.env` with your GCS credentials:
+     ```env
+     GOOGLE_CLOUD_PROJECT_ID=your-project-id
+     GOOGLE_CLOUD_STORAGE_BUCKET=your-bucket-name
+     ```
+
+4. **Access the application**:
+   - Application: http://localhost:8000
+   - phpMyAdmin: http://localhost:8080
+   - API Documentation: Available in API_DOCUMENTATION.md
+
+**Docker Commands**:
+```bash
+# Start services
+make up
+
+# View logs
+make logs
+
+# Access shell
+make shell
+
+# Run tests
+make test
+
+# Stop services
+make down
+```
+
+See [DOCKER_SETUP.md](DOCKER_SETUP.md) for detailed Docker setup instructions.
+
+### Manual Installation
+
 1. Clone the repository
 2. Copy `.env.example` to `.env` and configure your environment variables
 3. Set up Google Cloud Storage credentials in `.env`:

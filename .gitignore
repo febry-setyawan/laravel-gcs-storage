@@ -28,3 +28,13 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# Docker specific
+.env.docker.local
+docker-compose.override.yml
+*.sql
+backup_*.sql
+
+# GCS credentials
+storage/app/gcs-service-account.json
+storage/app/*.json
