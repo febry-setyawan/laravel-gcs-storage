@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FileUploadRequest;
+use App\Http\Requests\FileUpdateRequest;
 use App\Models\File;
 use App\Services\FileManagementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class InternalFileController extends Controller
 {
@@ -51,13 +52,8 @@ class InternalFileController extends Controller
     /**
      * Upload new file
      */
-    public function store(Request $request)
+    public function store(FileUploadRequest $request)
     {
-        $request->validate([
-            'file' => 'required|file|max:102400', // 100MB max
-            'description' => 'nullable|string|max:1000',
-        ]);
-
         $user = Auth::user();
         $result = $this->fileService->uploadFile(
             $request->file('file'),
@@ -108,13 +104,8 @@ class InternalFileController extends Controller
     /**
      * Update file metadata
      */
-    public function update(Request $request, $id)
+    public function update(FileUpdateRequest $request, $id)
     {
-        $request->validate([
-            'description' => 'nullable|string|max:1000',
-            'is_published' => 'boolean',
-        ]);
-
         $user = Auth::user();
         $file = $user->files()->findOrFail($id);
 
