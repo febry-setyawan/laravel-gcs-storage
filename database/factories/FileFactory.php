@@ -37,16 +37,16 @@ class FileFactory extends Factory
 
         $mimeType = fake()->randomElement($mimeTypes);
         $extension = $extensions[$mimeType];
-        $filename = fake()->slug() . '_' . uniqid() . '.' . $extension;
+        $filename = fake()->slug().'_'.uniqid().'.'.$extension;
 
         return [
             'user_id' => User::factory(),
-            'original_name' => fake()->words(3, true) . '.' . $extension,
+            'original_name' => fake()->words(3, true).'.'.$extension,
             'filename' => $filename,
-            'path' => 'uploads/test/' . $filename,
+            'path' => 'uploads/test/'.$filename,
             'mime_type' => $mimeType,
             'size' => fake()->numberBetween(1024, 5242880), // 1KB to 5MB
-            'gcs_path' => 'uploads/test/' . $filename,
+            'gcs_path' => 'uploads/test/'.$filename,
             'is_published' => fake()->boolean(30), // 30% chance of being published
             'description' => fake()->optional()->sentence(),
         ];

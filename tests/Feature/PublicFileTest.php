@@ -14,13 +14,13 @@ class PublicFileTest extends TestCase
     public function test_can_list_published_files(): void
     {
         $user = User::factory()->create();
-        
+
         // Create published files
         File::factory()->count(3)->create([
             'user_id' => $user->id,
             'is_published' => true,
         ]);
-        
+
         // Create unpublished files (should not be returned)
         File::factory()->count(2)->create([
             'user_id' => $user->id,
@@ -92,13 +92,13 @@ class PublicFileTest extends TestCase
     public function test_can_get_public_stats(): void
     {
         $user = User::factory()->create();
-        
+
         File::factory()->count(5)->create([
             'user_id' => $user->id,
             'is_published' => true,
             'size' => 1024,
         ]);
-        
+
         File::factory()->count(3)->create([
             'user_id' => $user->id,
             'is_published' => false,
@@ -126,13 +126,13 @@ class PublicFileTest extends TestCase
     public function test_can_search_published_files(): void
     {
         $user = User::factory()->create();
-        
+
         File::factory()->create([
             'user_id' => $user->id,
             'is_published' => true,
             'original_name' => 'important-document.pdf',
         ]);
-        
+
         File::factory()->create([
             'user_id' => $user->id,
             'is_published' => true,
@@ -142,7 +142,7 @@ class PublicFileTest extends TestCase
         $response = $this->getJson('/api/public/files?search=important');
 
         $response->assertStatus(200);
-        
+
         $data = $response->json('data');
         $this->assertCount(1, $data);
         $this->assertEquals('important-document.pdf', $data[0]['original_name']);

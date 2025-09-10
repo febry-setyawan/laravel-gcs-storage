@@ -1,28 +1,28 @@
 services:
-    app:
-        build:
-            context: .
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP:-1000}'
-        image: 'laravel-gcs-storage/app'
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        ports:
-            - '${APP_PORT:-8000}:80'
-        environment:
-            WWWUSER: '${WWWUSER:-1000}'
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
-            IGNITION_LOCAL_SITES_PATH: '${PWD}'
-        volumes:
-            - '.:/var/www/html'
-        networks:
-            - laravel-gcs
-        depends_on:
-            - mysql
-            - redis
+    # app:
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile
+    #         args:
+    #             WWWGROUP: '${WWWGROUP:-1000}'
+    #     image: 'laravel-gcs-storage/app'
+    #     extra_hosts:
+    #         - 'host.docker.internal:host-gateway'
+    #     ports:
+    #         - '${APP_PORT:-8000}:80'
+    #     environment:
+    #         WWWUSER: '${WWWUSER:-1000}'
+    #         LARAVEL_SAIL: 1
+    #         XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+    #         XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+    #         IGNITION_LOCAL_SITES_PATH: '${PWD}'
+    #     volumes:
+    #         - '.:/var/www/html'
+    #     networks:
+    #         - laravel-gcs
+    #     depends_on:
+    #         - mysql
+    #         - redis
 
     mysql:
         image: 'mysql/mysql-server:8.0'
@@ -66,7 +66,7 @@ services:
             timeout: 5s
 
     phpmyadmin:
-        image: 'phpmyadmin/phpmyadmin:latest'
+        image: 'phpmyadmin:latest'
         ports:
             - '${FORWARD_PHPMYADMIN_PORT:-8080}:80'
         environment:

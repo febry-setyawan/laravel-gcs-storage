@@ -36,7 +36,7 @@ class File extends Model
 
     public function getPublicUrlAttribute()
     {
-        if (!$this->is_published) {
+        if (! $this->is_published) {
             return null;
         }
 

@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class GoogleCloudStorageService
 {
     protected $storage;
+
     protected $bucket;
 
     public function __construct()
@@ -25,11 +26,11 @@ class GoogleCloudStorageService
     /**
      * Upload file to Google Cloud Storage
      */
-    public function upload(UploadedFile $file, string $path = null): array
+    public function upload(UploadedFile $file, ?string $path = null): array
     {
         try {
             $filename = $this->generateUniqueFilename($file);
-            $gcsPath = $path ? $path . '/' . $filename : $filename;
+            $gcsPath = $path ? $path.'/'.$filename : $filename;
 
             // Upload file to GCS
             $object = $this->bucket->upload(
@@ -39,7 +40,7 @@ class GoogleCloudStorageService
                     'metadata' => [
                         'contentType' => $file->getMimeType(),
                         'originalName' => $file->getClientOriginalName(),
-                    ]
+                    ],
                 ]
             );
 
@@ -52,7 +53,8 @@ class GoogleCloudStorageService
                 'size' => $file->getSize(),
             ];
         } catch (\Exception $e) {
-            Log::error('GCS upload failed: ' . $e->getMessage());
+            Log::error('GCS upload failed: '.$e->getMessage());
+
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -67,14 +69,15 @@ class GoogleCloudStorageService
     {
         try {
             $object = $this->bucket->object($gcsPath);
-            
-            if (!$object->exists()) {
+
+            if (! $object->exists()) {
                 return null;
             }
 
             return $object->downloadAsString();
         } catch (\Exception $e) {
-            Log::error('GCS download failed: ' . $e->getMessage());
+            Log::error('GCS download failed: '.$e->getMessage());
+
             return null;
         }
     }
@@ -86,15 +89,17 @@ class GoogleCloudStorageService
     {
         try {
             $object = $this->bucket->object($gcsPath);
-            
+
             if ($object->exists()) {
                 $object->delete();
+
                 return true;
             }
 
             return false;
         } catch (\Exception $e) {
-            Log::error('GCS delete failed: ' . $e->getMessage());
+            Log::error('GCS delete failed: '.$e->getMessage());
+
             return false;
         }
     }
@@ -106,9 +111,11 @@ class GoogleCloudStorageService
     {
         try {
             $object = $this->bucket->object($gcsPath);
+
             return $object->exists();
         } catch (\Exception $e) {
-            Log::error('GCS exists check failed: ' . $e->getMessage());
+            Log::error('GCS exists check failed: '.$e->getMessage());
+
             return false;
         }
     }
@@ -120,13 +127,13 @@ class GoogleCloudStorageService
     {
         try {
             $object = $this->bucket->object($gcsPath);
-            
-            if (!$object->exists()) {
+
+            if (! $object->exists()) {
                 return null;
             }
 
             $info = $object->info();
-            
+
             return [
                 'name' => $info['name'],
                 'size' => $info['size'],
@@ -135,7 +142,8 @@ class GoogleCloudStorageService
                 'etag' => $info['etag'],
             ];
         } catch (\Exception $e) {
-            Log::error('GCS file info failed: ' . $e->getMessage());
+            Log::error('GCS file info failed: '.$e->getMessage());
+
             return null;
         }
     }
@@ -148,7 +156,7 @@ class GoogleCloudStorageService
         $extension = $file->getClientOriginalExtension();
         $basename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $basename = Str::slug($basename);
-        
-        return $basename . '_' . uniqid() . '.' . $extension;
+
+        return $basename.'_'.uniqid().'.'.$extension;
     }
 }

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\File;
 use App\Services\FileManagementService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class PublicFileController extends Controller
 {
@@ -23,7 +22,7 @@ class PublicFileController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-        
+
         if ($search) {
             $files = $this->fileService->searchFiles($search, true, 15);
         } else {
@@ -52,7 +51,7 @@ class PublicFileController extends Controller
             ->with('user:id,name')
             ->first();
 
-        if (!$file) {
+        if (! $file) {
             return response()->json([
                 'success' => false,
                 'message' => 'File not found or not published',
@@ -83,7 +82,7 @@ class PublicFileController extends Controller
             ->where('is_published', true)
             ->first();
 
-        if (!$file) {
+        if (! $file) {
             return response()->json([
                 'success' => false,
                 'message' => 'File not found or not published',
@@ -92,7 +91,7 @@ class PublicFileController extends Controller
 
         $downloadData = $this->fileService->downloadFile($file);
 
-        if (!$downloadData) {
+        if (! $downloadData) {
             return response()->json([
                 'success' => false,
                 'message' => 'File content not available',
@@ -101,7 +100,7 @@ class PublicFileController extends Controller
 
         return response($downloadData['content'])
             ->header('Content-Type', $downloadData['mime_type'])
-            ->header('Content-Disposition', 'attachment; filename="' . $downloadData['filename'] . '"')
+            ->header('Content-Disposition', 'attachment; filename="'.$downloadData['filename'].'"')
             ->header('Content-Length', $downloadData['size']);
     }
 
@@ -137,12 +136,12 @@ class PublicFileController extends Controller
      */
     private function formatBytes($size, $precision = 2)
     {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
         for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
             $size /= 1024;
         }
 
-        return round($size, $precision) . ' ' . $units[$i];
+        return round($size, $precision).' '.$units[$i];
     }
 }

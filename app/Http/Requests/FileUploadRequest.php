@@ -26,7 +26,7 @@ class FileUploadRequest extends FormRequest
                 'required',
                 'file',
                 'max:102400', // 100MB in kilobytes
-                'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png,gif,bmp,svg,zip,rar,tar,gz,mp4,avi,mov,wmv,mp3,wav,flac'
+                'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,jpg,jpeg,png,gif,bmp,svg,zip,rar,tar,gz,mp4,avi,mov,wmv,mp3,wav,flac',
             ],
             'description' => 'nullable|string|max:1000',
         ];

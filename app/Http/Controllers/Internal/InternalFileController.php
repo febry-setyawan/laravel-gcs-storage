@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FileUploadRequest;
 use App\Http\Requests\FileUpdateRequest;
+use App\Http\Requests\FileUploadRequest;
 use App\Models\File;
 use App\Services\FileManagementService;
 use Illuminate\Http\Request;
@@ -26,7 +26,7 @@ class InternalFileController extends Controller
     {
         $user = Auth::user();
         $search = $request->get('search');
-        
+
         if ($search) {
             $files = $this->fileService->searchFiles($search, false, 15);
             // Filter to only show user's files
@@ -61,10 +61,10 @@ class InternalFileController extends Controller
             $request->get('description')
         );
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to upload file: ' . $result['error'],
+                'message' => 'Failed to upload file: '.$result['error'],
             ], 500);
         }
 
@@ -114,7 +114,7 @@ class InternalFileController extends Controller
             'is_published',
         ]));
 
-        if (!$success) {
+        if (! $success) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update file',
@@ -138,7 +138,7 @@ class InternalFileController extends Controller
 
         $success = $this->fileService->deleteFile($file);
 
-        if (!$success) {
+        if (! $success) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to delete file',
@@ -161,7 +161,7 @@ class InternalFileController extends Controller
 
         $downloadData = $this->fileService->downloadFile($file);
 
-        if (!$downloadData) {
+        if (! $downloadData) {
             return response()->json([
                 'success' => false,
                 'message' => 'File content not available',
@@ -170,7 +170,7 @@ class InternalFileController extends Controller
 
         return response($downloadData['content'])
             ->header('Content-Type', $downloadData['mime_type'])
-            ->header('Content-Disposition', 'attachment; filename="' . $downloadData['filename'] . '"')
+            ->header('Content-Disposition', 'attachment; filename="'.$downloadData['filename'].'"')
             ->header('Content-Length', $downloadData['size']);
     }
 
@@ -184,7 +184,7 @@ class InternalFileController extends Controller
 
         $success = $this->fileService->togglePublication($file);
 
-        if (!$success) {
+        if (! $success) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to toggle publication status',
@@ -207,7 +207,7 @@ class InternalFileController extends Controller
     public function stats()
     {
         $user = Auth::user();
-        
+
         $totalFiles = $user->files()->count();
         $publishedFiles = $user->files()->where('is_published', true)->count();
         $totalSize = $user->files()->sum('size');
@@ -238,12 +238,12 @@ class InternalFileController extends Controller
      */
     private function formatBytes($size, $precision = 2)
     {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
         for ($i = 0; $size > 1024 && $i < count($units) - 1; $i++) {
             $size /= 1024;
         }
 
-        return round($size, $precision) . ' ' . $units[$i];
+        return round($size, $precision).' '.$units[$i];
     }
 }

@@ -20,16 +20,16 @@ class FileManagementService
     /**
      * Upload and store file with database record
      */
-    public function uploadFile(UploadedFile $file, User $user, string $description = null): array
+    public function uploadFile(UploadedFile $file, User $user, ?string $description = null): array
     {
         DB::beginTransaction();
 
         try {
             // Upload to GCS
-            $uploadResult = $this->gcsService->upload($file, 'uploads/' . $user->id);
+            $uploadResult = $this->gcsService->upload($file, 'uploads/'.$user->id);
 
-            if (!$uploadResult['success']) {
-                throw new \Exception('Failed to upload file to GCS: ' . $uploadResult['error']);
+            if (! $uploadResult['success']) {
+                throw new \Exception('Failed to upload file to GCS: '.$uploadResult['error']);
             }
 
             // Create database record
@@ -37,7 +37,7 @@ class FileManagementService
                 'user_id' => $user->id,
                 'original_name' => $uploadResult['original_name'],
                 'filename' => $uploadResult['filename'],
-                'path' => 'uploads/' . $user->id . '/' . $uploadResult['filename'],
+                'path' => 'uploads/'.$user->id.'/'.$uploadResult['filename'],
                 'mime_type' => $uploadResult['mime_type'],
                 'size' => $uploadResult['size'],
                 'gcs_path' => $uploadResult['gcs_path'],
@@ -53,7 +53,7 @@ class FileManagementService
             ];
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('File upload failed: ' . $e->getMessage());
+            Log::error('File upload failed: '.$e->getMessage());
 
             return [
                 'success' => false,
@@ -92,7 +92,7 @@ class FileManagementService
             // Delete from GCS
             $deleted = $this->gcsService->delete($file->gcs_path);
 
-            if (!$deleted) {
+            if (! $deleted) {
                 Log::warning('Failed to delete file from GCS, but continuing with database deletion', [
                     'file_id' => $file->id,
                     'gcs_path' => $file->gcs_path,
@@ -107,7 +107,8 @@ class FileManagementService
             return true;
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error('File deletion failed: ' . $e->getMessage());
+            Log::error('File deletion failed: '.$e->getMessage());
+
             return false;
         }
     }
@@ -118,12 +119,13 @@ class FileManagementService
     public function togglePublication(File $file): bool
     {
         try {
-            $file->is_published = !$file->is_published;
+            $file->is_published = ! $file->is_published;
             $file->save();
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Failed to toggle file publication: ' . $e->getMessage());
+            Log::error('Failed to toggle file publication: '.$e->getMessage());
+
             return false;
         }
     }
@@ -141,7 +143,8 @@ class FileManagementService
 
             return true;
         } catch (\Exception $e) {
-            Log::error('Failed to update file: ' . $e->getMessage());
+            Log::error('Failed to update file: '.$e->getMessage());
+
             return false;
         }
     }
@@ -175,7 +178,7 @@ class FileManagementService
         $builder = File::query()
             ->where(function ($q) use ($query) {
                 $q->where('original_name', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%");
+                    ->orWhere('description', 'like', "%{$query}%");
             })
             ->with('user:id,name');
 
