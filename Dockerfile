@@ -14,6 +14,10 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     zip \
     unzip \
+    ca-certificates \
+    nginx \
+    supervisor \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
@@ -34,16 +38,25 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy existing application directory contents
 COPY . /var/www/html
 
-# Set up environment file for Laravel before running composer and set permissions
+# Copy nginx config
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Copy supervisor config
+COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Set up environment file for Laravel before running composer dan set permissions
 RUN cp /var/www/html/.env.docker /var/www/html/.env && \
+    mkdir -p /var/www/html/storage /var/www/html/storage/logs /var/www/html/bootstrap/cache /var/www/html/docker/logs&& \
     chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
-    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    chmod -R 775 /var/www/html/bootstrap/cache && \
+    chmod -R 777 /var/www/html/storage /var/www/html/storage/logs /var/www/html/docker/logs
 
 # Install composer dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer config --global disable-tls true && composer install --no-dev --optimize-autoloader
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
+# Expose port 80 for nginx
+EXPOSE 80
 
-# Start PHP-FPM
-CMD ["php-fpm"]
+# Start supervisor (which will run both php-fpm and nginx)
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
